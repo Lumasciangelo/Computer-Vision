@@ -80,7 +80,6 @@ from ultralytics import YOLO
 import cv2
 import numpy as np
 import requests
-from io import BytesIO
 
 def load_model():
     # Cargar el modelo YOLOv8
@@ -98,11 +97,11 @@ def calcular_volumen(cls, bbox):
     width = bbox[2] - bbox[0]
     height = bbox[3] - bbox[1]
     
-    if cls == "manzana" or cls == "naranja":  # Aproximamos a una esfera
+    if cls == "apple" or cls == "orange":  # Aproximamos a una esfera
         radio = (width + height) / 4  # Promedio de las dimensiones para el radio
         volumen = (4/3) * np.pi * (radio ** 3)
     
-    # elif cls == "pera":  # Aproximamos a un elipsoide
+    # elif cls == "pear":  # Aproximamos a un elipsoide
     #     a = width / 2
     #     b = height / 2
     #     c = (a + b) / 2  # Suponemos que el eje c es el promedio
@@ -121,10 +120,10 @@ def calcular_volumen(cls, bbox):
 def calcular_peso(cls, volumen):
     # Densidades aproximadas en gramos por cm^3
     densidades = {
-        "manzana": 0.8,
-        "naranja": 0.9,
-        "pera": 0.6,
-        "banana": 0.95  # Densidad aproximada para la banana
+        "apple": 0.8,
+        "orange": 0.9,
+        "pear": 0.6,
+        "banana": 0.95  
     }
     
     if cls in densidades and volumen:
@@ -142,9 +141,13 @@ def detect_fruits(image_url, model):
     # Obtener la primera imagen procesada (asumiendo que solo hay una imagen)
     result = results[0]
     
+    # Con una imagen de resolución 1000 x 700 píxeles y asumiendo que el campo de visión (FOV) 
+    # de la cámara es de 70 grados a 30 cm de distancia, puedes calcular la relación píxeles/cm 
+    # con estos valores da 23.8 
+    
     # Dibujar las detecciones y calcular volumen/peso
     for box in result.boxes:
-        x1, y1, x2, y2 = box.xyxy[0]
+        x1, y1, x2, y2 = ((box.xyxy[0])/23.8)
         x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
         conf = float(box.conf)
         cls = int(box.cls)
