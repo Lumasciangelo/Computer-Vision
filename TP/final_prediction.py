@@ -21,15 +21,15 @@ if not captura.isOpened():
 
 # Mapa de gestos
 mapa_gestos = {
-    0: 'Puño',          # Abrir navegador
-    1: 'Ok',            # Minimizar todas las ventanas
-    2: 'Paz',           # Tomar una captura de pantalla
-    3: 'Like',          # Subir el volumen
-    4: 'Dislike',       # Bloquear pantalla
-    5: 'Cuerno',        # Abrir explorador de archivos
-    6: 'Suerte',        # Bajar volumen
-    7: 'Mano abierta',  # Cambiar ventana activa
-    8: 'Pistola',       # Cerrar la ventana activa
+    0: 'Puño',              # Abrir navegador
+    1: 'Ok',                # Minimizar todas las ventanas
+    2: 'Paz',               # Tomar una captura de pantalla
+    3: 'Like',              # Subir el volumen
+    4: 'Dislike',           # Bajar volumen
+    5: 'Cuerno',            # Abrir explorador de archivos
+    6: 'Suerte',            # Bloquear pantalla
+    7: 'Mano abierta',      # Cambiar ventana activa
+    8: 'Pistola',           # Cerrar la ventana activa
     9: 'Tres dedos arriba'  # Tomar una selfie
 }
 
@@ -110,11 +110,11 @@ with mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_conf
         elif predicted_label == 3:
             subir_volumen()
         elif predicted_label == 4:
-            bloquear_pantalla()
+            bajar_volumen()
         elif predicted_label == 5:
             abrir_explorador()
-        elif predicted_label == 6:
-            bajar_volumen()
+        # elif predicted_label == 6:
+        #     bloquear_pantalla()
         elif predicted_label == 7:
             cambiar_ventana()
         elif predicted_label == 8:
@@ -127,3 +127,10 @@ with mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_conf
             break
 
 cv2.destroyAllWindows()
+
+
+## Guardar las imágenes 
+## Mostrar algunas de ejmplo 
+## Verificacion de que no se abran dos ventanas de chrome
+## Guardar las métricas
+
