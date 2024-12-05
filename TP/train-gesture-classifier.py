@@ -13,11 +13,11 @@ X = np.array(X)
 
 # Crear un modelo simple con coordenadas 3D
 model = models.Sequential([
-    layers.Input(shape=(21, 3)),  # Cambiado a 3D
+    layers.Input(shape=(2, 21, 3)),  # Entrada 2 manos, 21 puntos, 3 coordenadas
     layers.Flatten(),
     layers.Dense(128, activation='relu'),
     layers.Dense(64, activation='relu'),
-    layers.Dense(3, activation='softmax')  # 3 clases: Piedra, Papel, Tijera
+    layers.Dense(10, activation='softmax')  
 ])
 
 # Compilar el modelo
