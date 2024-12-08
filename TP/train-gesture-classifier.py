@@ -27,17 +27,17 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 
 # Dividir los datos en entrenamiento y prueba
-X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+X_train, X_val, y_train, y_val = train_test_split(X, Y, test_size=0.2, random_state=42)
 
 # Entrenar el modelo
-model.fit(X_train, y_train, epochs=50, validation_data=(X_test, y_test))
+model.fit(X_train, y_train, epochs=100, validation_data=(X_val, y_val))
 
 # Evaluar el modelo
-y_pred = np.argmax(model.predict(X_test), axis=1)
+y_pred = np.argmax(model.predict(X_val), axis=1)
 print("Reporte de clasificación:")
-print(classification_report(y_test, y_pred))
+print(classification_report(y_val, y_pred))
 print("Matriz de confusión:")
-print(confusion_matrix(y_test, y_pred))
+print(confusion_matrix(y_val, y_pred))
 
 # Guardar el modelo en un archivo .h5
 model.save('mi_modelo.h5')

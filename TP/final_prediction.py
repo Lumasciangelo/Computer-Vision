@@ -21,16 +21,16 @@ if not captura.isOpened():
 
 # Mapa de gestos
 mapa_gestos = {
-    0: 'Puño',              # Abrir navegador
-    1: 'Ok',                # Minimizar todas las ventanas
-    2: 'Paz',               # Tomar una captura de pantalla
-    3: 'Like',              # Subir el volumen
-    4: 'Dislike',           # Bajar volumen
-    5: 'Cuerno',            # Abrir explorador de archivos
-    6: 'Suerte',            # Bloquear pantalla
-    7: 'Mano abierta',      # Cambiar ventana activa
-    8: 'Pistola',           # Cerrar la ventana activa
-    9: 'Tres dedos arriba'  # Tomar una selfie
+    0: 'Puño',              
+    1: 'Ok',                
+    2: 'Paz',               
+    3: 'Like',              
+    4: 'Dislike',           
+    5: 'Cuerno',            
+    6: 'Suerte',            
+    7: 'Mano abierta',      
+    8: 'Pistola',           
+    9: 'Tres dedos arriba'  
 }
 
 # Funciones de acciones
@@ -65,7 +65,15 @@ def cerrar_ventana():
 def tomar_selfie(frame):
     cv2.imwrite('selfie.png', frame)
 
-# Bucle para capturar video en vivo
+# Diccionario para rastrear acciones únicas
+acciones_unicas = {0: False, 5: False}  # 0 = Navegador, 5 = Explorador
+
+# Variables para tiempo de detección
+gesto_actual = None
+contador_frames = 0
+umbral_frames = 10
+
+# Bucle principal
 with mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.7) as hands:
     while True:
         ret, frame = captura.read()
@@ -87,6 +95,10 @@ with mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_conf
             texto = 'No se detectaron manos'
             cv2.putText(frame, texto, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
             cv2.imshow("Video en Vivo", frame)
+            # Reiniciar estados si no hay manos detectadas
+            acciones_unicas = {0: False, 5: False}
+            gesto_actual = None
+            contador_frames = 0
             continue
 
         if len(manos_detectadas) == 1:
@@ -100,27 +112,47 @@ with mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_conf
         cv2.putText(frame, texto, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
         cv2.imshow("Video en Vivo", frame)
 
-        # Realizar la acción correspondiente
-        if predicted_label == 0:
-            abrir_navegador()
-        elif predicted_label == 1:
-            minimizar_todo()
-        elif predicted_label == 2:
-            captura_pantalla()
-        elif predicted_label == 3:
-            subir_volumen()
-        elif predicted_label == 4:
-            bajar_volumen()
-        elif predicted_label == 5:
-            abrir_explorador()
-        # elif predicted_label == 6:
-        #     bloquear_pantalla()
-        elif predicted_label == 7:
-            cambiar_ventana()
-        elif predicted_label == 8:
-            cerrar_ventana()
-        elif predicted_label == 9:
-            tomar_selfie(frame)
+        # Verificar si el gesto se mantiene
+        if predicted_label == gesto_actual:
+            contador_frames += 1
+        else:
+            gesto_actual = predicted_label
+            contador_frames = 1
+
+        # Acciones únicas: Navegador y Explorador
+        if predicted_label in acciones_unicas:
+            if contador_frames >= umbral_frames and not acciones_unicas[predicted_label]:
+                if predicted_label == 0:
+                    abrir_navegador()
+                elif predicted_label == 5:
+                    abrir_explorador()
+
+                # Marcar la acción como ejecutada
+                acciones_unicas[predicted_label] = True
+
+        # Acciones repetibles
+        elif contador_frames >= umbral_frames:
+            if predicted_label == 1:
+                minimizar_todo()
+            elif predicted_label == 2:
+                captura_pantalla()
+            elif predicted_label == 3:
+                subir_volumen()
+            elif predicted_label == 4:
+                bajar_volumen()
+            elif predicted_label == 6:
+                bloquear_pantalla()
+            elif predicted_label == 7:
+                cambiar_ventana()
+            elif predicted_label == 8:
+                cerrar_ventana()
+            elif predicted_label == 9:
+                tomar_selfie(frame)
+
+        # Reiniciar estado de acciones únicas si el gesto cambia
+        for key in acciones_unicas.keys():
+            if key != gesto_actual:
+                acciones_unicas[key] = False
 
         key = cv2.waitKey(5) & 0xFF
         if key == ord('q'):
@@ -128,9 +160,7 @@ with mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_conf
 
 cv2.destroyAllWindows()
 
-
 ## Guardar las imágenes 
 ## Mostrar algunas de ejmplo 
 ## Verificacion de que no se abran dos ventanas de chrome
 ## Guardar las métricas
-
