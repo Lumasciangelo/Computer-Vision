@@ -6,7 +6,7 @@ import os
 import pyautogui
 
 # Cargar el modelo entrenado
-model = tf.keras.models.load_model('mi_modelo.h5')
+model = tf.keras.models.load_model('TP\mi_modelo.h5')
 
 # Inicializar MediaPipe para detección de manos
 mp_hands = mp.solutions.hands
@@ -71,7 +71,7 @@ acciones_unicas = {0: False, 5: False}  # 0 = Navegador, 5 = Explorador
 # Variables para tiempo de detección
 gesto_actual = None
 contador_frames = 0
-umbral_frames = 10
+umbral_frames = 30
 
 # Bucle principal
 with mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.7) as hands:
@@ -159,8 +159,3 @@ with mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_conf
             break
 
 cv2.destroyAllWindows()
-
-## Guardar las imágenes 
-## Mostrar algunas de ejmplo 
-## Verificacion de que no se abran dos ventanas de chrome
-## Guardar las métricas

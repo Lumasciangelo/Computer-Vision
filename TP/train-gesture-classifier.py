@@ -5,8 +5,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
 
 # Cargar los datos desde los archivos .npy
-X = np.load('mi_dataset_X.npy')
-Y = np.load('mi_dataset_Y.npy')
+X = np.load('TP\mi_dataset_X.npy')
+Y = np.load('TP\mi_dataset_Y.npy')
 
 # Normalización de datos (opcional si los datos ya están normalizados)
 X = np.array(X)
@@ -40,5 +40,5 @@ print("Matriz de confusión:")
 print(confusion_matrix(y_val, y_pred))
 
 # Guardar el modelo en un archivo .h5
-model.save('mi_modelo.h5')
+model.save('TP\mi_modelo.h5')
 print("Modelo guardado en 'mi_modelo.h5'.")

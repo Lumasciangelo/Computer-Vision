@@ -3,9 +3,11 @@ import os
 import mediapipe as mp
 import numpy as np
 
-# Crear carpetas para guardar las imágenes
-output_dir_original = "imagenes_originales"
-output_dir_procesadas = "imagenes_procesadas"
+# Crear carpeta base 'TP' para guardar las imágenes
+base_dir = "TP"
+output_dir_original = os.path.join(base_dir, "imagenes_originales")
+output_dir_procesadas = os.path.join(base_dir, "imagenes_procesadas")
+os.makedirs(base_dir, exist_ok=True)
 os.makedirs(output_dir_original, exist_ok=True)
 os.makedirs(output_dir_procesadas, exist_ok=True)
 
@@ -67,9 +69,15 @@ with mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_conf
             Y.append(etiqueta)
             X.append(manos_detectadas)
 
+            # Crear subcarpetas por gesto si no existen
+            gesto_original_dir = os.path.join(output_dir_original, f"gesto{etiqueta}")
+            gesto_procesada_dir = os.path.join(output_dir_procesadas, f"gesto{etiqueta}")
+            os.makedirs(gesto_original_dir, exist_ok=True)
+            os.makedirs(gesto_procesada_dir, exist_ok=True)
+
             # Generar nombres únicos para las imágenes
-            original_filename = os.path.join(output_dir_original, f"gesto_{etiqueta}_original_{len(X)}.jpg")
-            processed_filename = os.path.join(output_dir_procesadas, f"gesto_{etiqueta}_procesada_{len(X)}.jpg")
+            original_filename = os.path.join(gesto_original_dir, f"gesto_{etiqueta}_original_{len(X)}.jpg")
+            processed_filename = os.path.join(gesto_procesada_dir, f"gesto_{etiqueta}_procesada_{len(X)}.jpg")
 
             # Guardar la imagen original
             cv2.imwrite(original_filename, frame)
